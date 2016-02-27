@@ -5,17 +5,62 @@
     var infoPopup = document.getElementById('infoPopup');
     var infoFrame = document.getElementById('infoFrame');
     var loadingScreen = document.getElementById('loadingScreen');
+    var removeNonAsciiButton = document.getElementById('removeNonAsciiButton');
+    var infoCheck = document.getElementById('infoCheck');
 
-    //pasteText.value = TEST_DATA;
     processButton.addEventListener('click',calcDisplay);
+
+    removeNonAsciiButton.addEventListener('click',removeNonAscii);
 
 
     window.addEventListener('mousemove',function(event){
-        infoPopup.style.left = event.pageX + 'px';
-        infoPopup.style.top = 10+event.pageY + 'px';
+        if(infoPopup.style.display === 'none'){return;}
+        //from top + scroll
+        var pageX = event.pageX;
+        var pageY = event.pageY;
+
+        //from window
+        var clientX = event.clientX;
+        var clientY = event.clientY;
+
+        var pWidth = infoPopup.offsetWidth;
+        var pHeight = infoPopup.offsetHeight;
+
+
+        if(clientY > window.innerHeight/2){
+            infoPopup.style.top = (pageY-pHeight-10) + 'px';
+        }else{
+            infoPopup.style.top = 10+pageY + 'px';
+        }
+
+        if(clientX > window.innerWidth/2){
+            infoPopup.style.left = (pageX-pWidth) + 'px';
+
+        }else{
+            infoPopup.style.left = pageX + 'px';
+        }
+
+
 
     },false);
 
+    pasteText.value = DATA;
+    processButton.click();
+
+
+
+    function removeNonAscii(){
+        var text = pasteText.value;
+        var output = '';
+        forEach(text,function(char,i){
+            var code = char.codePointAt(0);
+            if( (code >= 0x0020  && code < 0x007F) || whitelist.hasOwnProperty(char)) {
+                output += char;
+            }
+        });
+        pasteText.value = output;
+        processButton.click();
+    }
 
 
     function calcDisplay(){
@@ -50,28 +95,24 @@
 
 
             }else if (blacklist.hasOwnProperty(char)){
-                output+= '<span class="blacklist" data-index="'+i+'">'+blacklist[char]+'</span>';
+                output+= '<span class="blacklist" data-index="'+i+'" data-code="'+code+'">'+blacklist[char]+'</span>';
             //warning, unknown unicode
             }else{
-                output+= '<span class="warning" data-index="'+i+'" data-code="'+code+'">'+toHex16String(code)+'</span>';
+                output+= '<span class="warning" data-index="'+i+'" data-code="'+code+'">'+char+'</span>';
             }
 
         }
         display.innerHTML = output;
 
         //blacklist handlers
-        var blacks = document.querySelectorAll('.blacklist');
+        var notables = document.querySelectorAll('.blacklist, .warning');
         var k = 0;
-        for(; k < blacks.length; ++k){
-            blacks[k].addEventListener('click',removeMe,false);
+        for(; k < notables.length; ++k){
+            notables[k].addEventListener('click',removeMe,false);
+            notables[k].addEventListener('mouseenter',displayInfo,false);
+            notables[k].addEventListener('mouseleave',hideInfo,false);
         }
 
-        var warnings = document.querySelectorAll('.warning');
-        k=0;
-        for(; k < warnings.length; ++k){
-            warnings[k].addEventListener('mouseenter',displayInfo,false);
-            warnings[k].addEventListener('mouseleave',hideInfo,false);
-        }
     }
 
 
@@ -80,17 +121,20 @@
         var index = parseInt(this.dataset.index);
 
         pasteText.value = text.substring(0,index) + text.substring(index+1);
-        this.remove();
+        hideInfo();
+        processButton.click();
+
     }
 
     function toHex16String(num){
-        var str = Number(num).toString(16);
+        var str = Number(num).toString(16).toUpperCase();
         var diff = 4 - str.length;
-        return '\\u'+Array(diff).join('0') + str;
+        return 'U+'+Array(diff).join('0') + str;
     }
 
 
     function displayInfo(event){
+        if(!infoCheck.checked){return false;}
         var code = parseInt(this.dataset.code).toString(16);
         var url = 'http://www.fileformat.info/info/unicode/char/'+code+'/index.htm';
         if(infoFrame.src !== url){
@@ -105,6 +149,16 @@
     }
     function hideInfo(event){
         infoPopup.style.display="none";
+    }
+
+
+
+    function forEach(iterable,func){
+        var _index = 0;
+        var length = iterable.length;
+        for(;_index < length; ++_index){
+            func(iterable[_index],_index);
+        }
     }
 
 })();

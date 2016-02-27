@@ -2,77 +2,16 @@
 <html>
 
 <head>
-    <style>
-        label,textarea{
-            display:block;
-        }
-        #displayWrapper{
-            border: 1px solid black;
-            font-family:monospace;
-            font-size: 105%;
-        }
-        .warning{
-            cursor:help;
-            color:blue;
-            background-color:#DADADA;
-            border:1px solid grey;
-        }
-        .whitelist{
-            color:black;
-            opacity:.3;
-        }
-        .blacklist{
-            cursor:pointer;
-            color:red;
-            background-color: aliceblue;
-            border:1px solid black;
-            position:relative;
-        }
-
-        .blacklist:hover::after{
-            content: 'X';
-            color: black;
-            position: absolute;
-            top: -5px;
-            right: 0;
-            background-color: white;
-            border: 1px solid black;
-            font-size: 10px;
-            font-family: "Arial Black",sans-serif;
-        }
-
-        #infoPopup{
-            position:absolute;
-            z-index:10;
-            box-shadow: 5px 5px 10px rgba(80, 80, 80, 0.5);
-
-
-        }
-
-        #loadingScreen{
-            z-index:10;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: opacity .2s;
-            background-color:white;
-
-        }
-        .popup{
-            position:absolute;
-            width:600px;
-            height:600px;
-        }
-    </style>
-
+    <link rel="stylesheet" type="text/css" href="uSpotter.css">
 </head>
 <body>
 <div id="formInput">
     <label for="pasteText">Paste Text</label>
     <textarea id="pasteText"></textarea>
     <button id="processButton">process</button>
+    <button id="removeNonAsciiButton">Remove Non-ASCII and Non-Visible</button>
+    <label for="infoCheck">infoPopup<input id="infoCheck" type="checkbox" checked="checked" /></label>
 </div>
-
 
 
 <div id="displayWrapper">
@@ -86,6 +25,7 @@
 
 
 
+<script src="testData.js"></script>
 <script src="notableData.js"></script>
 <script src="uSpotter.js"></script>
 </body>
