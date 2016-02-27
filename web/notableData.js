@@ -9,11 +9,9 @@ var blacklist = {
     "\u0006": "ACK",
     "\u0007": "BEL",
     "\u0008": "BS",
-    //"\u0009": "HT", tab OK
-    //"\u000A": "LF", \n OK
+
     "\u000B": "VT",
     "\u000C": "FF",
-    "\u000D": "CR",
     "\u000E": "SO",
     "\u000F": "SI",
     "\u0010": "DLE",
@@ -56,5 +54,10 @@ var blacklist = {
     "\uFEFF": "ZERO WIDTH NO-BREAK SPACE"
 };
 
+var whitelist = {
+    "\u0009": "....", //tab
+    "\u000A": "\\n\u21a9",// \n
+    "\u000D": "\\r\u21a9" // \r
+};
 
 

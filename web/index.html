@@ -8,6 +8,60 @@
         }
         #displayWrapper{
             border: 1px solid black;
+            font-family:monospace;
+            font-size: 105%;
+        }
+        .warning{
+            cursor:help;
+            color:blue;
+            background-color:#DADADA;
+            border:1px solid grey;
+        }
+        .whitelist{
+            color:black;
+            opacity:.3;
+        }
+        .blacklist{
+            cursor:pointer;
+            color:red;
+            background-color: aliceblue;
+            border:1px solid black;
+            position:relative;
+        }
+
+        .blacklist:hover::after{
+            content: 'X';
+            color: black;
+            position: absolute;
+            top: -5px;
+            right: 0;
+            background-color: white;
+            border: 1px solid black;
+            font-size: 10px;
+            font-family: "Arial Black",sans-serif;
+        }
+
+        #infoPopup{
+            position:absolute;
+            z-index:10;
+            box-shadow: 5px 5px 10px rgba(80, 80, 80, 0.5);
+
+
+        }
+
+        #loadingScreen{
+            z-index:10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity .2s;
+            background-color:white;
+
+        }
+        .popup{
+            position:absolute;
+            width:600px;
+            height:600px;
         }
     </style>
 
@@ -22,13 +76,17 @@
 
 
 <div id="displayWrapper">
-    <div id="display">
+    <div id="display"></div>
+</div>
 
-    </div>
+<div id="infoPopup" class="popup" style="display: none;">
+    <div id="loadingScreen" class="popup"><img id="loader" src="loader.svg" /></div>
+    <iframe id="infoFrame"  class="popup" scrolling="no" frameborder="0" ></iframe>
 </div>
 
 
-<script src="blacklist.js"></script>
+
+<script src="notableData.js"></script>
 <script src="uSpotter.js"></script>
 </body>
 </html>
