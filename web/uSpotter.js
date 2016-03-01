@@ -7,10 +7,11 @@
     var loadingScreen = document.getElementById('loadingScreen');
     var removeNonAsciiButton = document.getElementById('removeNonAsciiButton');
     var infoCheck = document.getElementById('infoCheck');
+    var rawButton = document.getElementById('rawButton');
 
     processButton.addEventListener('click',calcDisplay);
-
     removeNonAsciiButton.addEventListener('click',removeNonAscii);
+    rawButton.addEventListener('click',showRawText);
 
 
     window.addEventListener('mousemove',function(event){
@@ -48,6 +49,14 @@
     processButton.click();
 
 
+    function showRawText(){
+        display.style.display = 'none';
+        pasteText.style.display = 'block';
+    }
+    function hideRawText(){
+        display.style.display = 'none';
+        pasteText.style.display = 'block';
+    }
 
     function removeNonAscii(){
         var text = pasteText.value;
@@ -64,6 +73,8 @@
 
 
     function calcDisplay(){
+        display.style.display = 'block';
+        pasteText.style.display = 'none';
         var text = pasteText.value;
         var length = text.length;
 

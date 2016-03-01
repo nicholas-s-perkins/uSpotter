@@ -5,19 +5,25 @@
     <link rel="stylesheet" type="text/css" href="uSpotter.css">
 </head>
 <body>
+<!--Controls-->
 <div id="formInput">
-    <label for="pasteText">Paste Text</label>
-    <textarea id="pasteText"></textarea>
-    <button id="processButton">process</button>
+
+    <button id="processButton">Process</button>
     <button id="removeNonAsciiButton">Remove Non-ASCII and Non-Visible</button>
+    <button id="rawButton">Raw</button>
     <label for="infoCheck">infoPopup<input id="infoCheck" type="checkbox" checked="checked" /></label>
 </div>
 
 
+<!--Input and display -->
 <div id="displayWrapper">
-    <div id="display"></div>
+    <label for="pasteText">Paste Text</label>
+    <textarea id="pasteText" class="display"></textarea>
+    <div id="display" class="display" style="display:none;"></div>
 </div>
 
+
+<!--Info Popup-->
 <div id="infoPopup" class="popup" style="display: none;">
     <div id="loadingScreen" class="popup">
         <!--Loader circles-->
@@ -27,8 +33,7 @@
     <iframe id="infoFrame"  class="popup" scrolling="no" frameborder="0" ></iframe>
 </div>
 
-
-
+<!--Scripts-->
 <script src="testData.js"></script>
 <script src="notableData.js"></script>
 <script src="uSpotter.js"></script>
