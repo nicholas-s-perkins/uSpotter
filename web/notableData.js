@@ -1,35 +1,35 @@
 var blacklist = {
     //control keys
     "\u0000": "NUL",
-    "\u0001": "SOH",
-    "\u0002": "STX",
-    "\u0003": "ETX",
-    "\u0004": "EOT",
-    "\u0005": "ENQ",
-    "\u0006": "ACK",
-    "\u0007": "BEL",
-    "\u0008": "BS",
+    "\u0001": "START OF HEADING",
+    "\u0002": "START OF TEXT",
+    "\u0003": "END OF TEXT",
+    "\u0004": "END OF TRANSMISSION",
+    "\u0005": "ENQUIRY",
+    "\u0006": "ACKNOWLEDGE",
+    "\u0007": "BELL",
+    "\u0008": "BACKSPACE",
 
-    "\u000B": "VT",
-    "\u000C": "FF",
-    "\u000E": "SO",
-    "\u000F": "SI",
-    "\u0010": "DLE",
+    "\u000B": "VERTICAL TAB",
+    "\u000C": "NP FORM FEED",
+    "\u000E": "SHIFT OUT",
+    "\u000F": "SHIFT IN",
+    "\u0010": "DATA LINK ESCAPE",
     "\u0011": "DC1",
     "\u0012": "DC2",
     "\u0013": "DC3",
     "\u0014": "DC4",
-    "\u0015": "NAK",
-    "\u0016": "SYN",
-    "\u0017": "ETB",
-    "\u0018": "CAN",
-    "\u0019": "EM",
-    "\u001A": "SIB",
+    "\u0015": "NEGATIVE ACKNOWLEDGE",
+    "\u0016": "SYNCHRONOUS IDLE",
+    "\u0017": "END OF TRANS. BLOCK",
+    "\u0018": "CANCEL",
+    "\u0019": "END OF MEDIUM",
+    "\u001A": "SUBSTITUTE",
     "\u001B": "ESC",
-    "\u001C": "FS",
-    "\u001D": "GS",
-    "\u001E": "RS",
-    "\u001F": "US",
+    "\u001C": "FILE SEPARATOR",
+    "\u001D": "GROUP SEPARATOR",
+    "\u001E": "RECORD SEPARATOR",
+    "\u001F": "UNIT SEPARATOR",
     //del
     "\u007F": "DEL",
     //special whitespace
@@ -55,8 +55,8 @@ var blacklist = {
 };
 
 var whitelist = {
-    "\u0009": "....", //tab
-    "\u000A": "\\n\u21a9",// \n
+    "\u0009": "\u21e5", //tab
+    "\u000A": "\\n\u21b5",// \n
     "\u000D": "\\r\u21a9" // \r
 };
 
