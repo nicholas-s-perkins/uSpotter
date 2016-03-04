@@ -189,73 +189,60 @@
 
 
     function pickBestCoordinateForPopup(pWidth,pHeight,winWidth,winHeight,x,y){
-        var cursorMargin = 10;
+        var cursorMargin = 20;
         var topSpace   = new RectSpace('top',0,0,winWidth,y-cursorMargin);
         var rightSpace = new RectSpace('right',x+cursorMargin,0,winWidth-(x+cursorMargin),winHeight);
         var btmSpace   = new RectSpace('btm',0,y+cursorMargin,winWidth,winHeight-(y+cursorMargin));
         var leftSpace  = new RectSpace('left',0,0,x-cursorMargin,winHeight);
+
         var popupSpace = new RectSpace('popup',null,null,pWidth,pHeight);
 
         var allSpaces = [topSpace,rightSpace,btmSpace,leftSpace];
 
         var mostSimilar = popupSpace.findMostSimilarFit(allSpaces);
+
         var chosenSpace = null;
-
-
-
         //see if most similar fits
         if(mostSimilar.width > popupSpace.width && mostSimilar.height > popupSpace.height){
             chosenSpace = mostSimilar;
-
-            //center popup with chosenspace and return coords
-            var cX = chosenSpace.width/2 + chosenSpace.x;
-            var cY = chosenSpace.height/2 + chosenSpace.y;
-
-            var centeredX = cX - popupSpace.width/2;
-            var centeredY = cY - popupSpace.height/2;
-
-            return {x:centeredX,y:centeredY};
-
-        //none fit, pick next best by volume/distance ratio
-        //do not center
+        //else fit the closest in size/ratio
         }else{
             chosenSpace = popupSpace.findClosestByRatio(allSpaces);
-            //center to mouse
-            var spacePoint = {x:0,y:0};
-            var popCorner = {x:0,y:0};
+        }
 
-            switch(chosenSpace.name){
-                case 'top':
-                    spacePoint.x = chosenSpace.x+chosenSpace.width/2;
-                    spacePoint.y = chosenSpace.y+chosenSpace.height;
+        console.log(chosenSpace);
+        var spacePoint = {x:0,y:0};
+        var popCorner = {x:0,y:0};
+        switch(chosenSpace.name){
+            case 'top':
+                spacePoint.x = chosenSpace.x+chosenSpace.width/2;
+                spacePoint.y = chosenSpace.y+chosenSpace.height;
 
-                    popCorner.x = spacePoint.x-popupSpace.width/2;
-                    popCorner.y = spacePoint.y-popupSpace.height;
-                    return popCorner;
-                case 'right':
-                    spacePoint.x = chosenSpace.x;
-                    spacePoint.y = chosenSpace.y+chosenSpace.height/2;
+                popCorner.x = spacePoint.x-popupSpace.width/2;
+                popCorner.y = spacePoint.y-popupSpace.height;
+                return popCorner;
+            case 'right':
+                spacePoint.x = chosenSpace.x;
+                spacePoint.y = chosenSpace.y+chosenSpace.height/2;
 
-                    popCorner.x = spacePoint.x;
-                    popCorner.y = spacePoint.y-popupSpace.height/2;
-                    return popCorner;
-                case 'bottom':
-                    spacePoint.x = chosenSpace.x+chosenSpace.width/2;
-                    spacePoint.y = chosenSpace.y;
+                popCorner.x = spacePoint.x;
+                popCorner.y = spacePoint.y-popupSpace.height/2;
+                return popCorner;
+            case 'bottom':
+                spacePoint.x = chosenSpace.x+chosenSpace.width/2;
+                spacePoint.y = chosenSpace.y;
 
-                    popCorner.x = spacePoint.x-popupSpace.width/2;
-                    popCorner.y = spacePoint.y;
-                    return popCorner;
-                case 'left':
-                    spacePoint.x = chosenSpace.x+chosenSpace.width;
-                    spacePoint.y = chosenSpace.y + chosenSpace.height/2;
+                popCorner.x = spacePoint.x-popupSpace.width/2;
+                popCorner.y = spacePoint.y;
+                return popCorner;
+            case 'left':
+                spacePoint.x = chosenSpace.x+chosenSpace.width;
+                spacePoint.y = chosenSpace.y + chosenSpace.height/2;
 
-                    popCorner.x = spacePoint.x-popupSpace.width;
-                    popCorner.y = spacePoint.y-popupSpace.height/2;
+                popCorner.x = spacePoint.x-popupSpace.width;
+                popCorner.y = spacePoint.y-popupSpace.height/2;
 
-                    return popCorner;
-            }
-
+                return popCorner;
         }
 
     }
