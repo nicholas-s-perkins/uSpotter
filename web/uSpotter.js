@@ -147,7 +147,7 @@
     function displayInfo(event){
         if(!infoCheck.checked){return false;}
         var code = parseInt(this.dataset.code).toString(16);
-        var url = 'http://www.fileformat.info/info/unicode/char/'+code+'/index.htm';
+        var url = 'https://www.fileformat.info/info/unicode/char/'+code+'/index.htm';
         if(infoFrame.src !== url){
             loadingScreen.style.opacity = '1';
             infoFrame.onload = function(){
