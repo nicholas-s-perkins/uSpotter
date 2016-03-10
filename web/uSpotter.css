@@ -1,7 +1,3 @@
-#pasteText{
-    width:100%;
-    height:500px;
-}
 textarea{
     display:block;
     padding: 0;
@@ -12,32 +8,35 @@ textarea{
     font-family:monospace;
     font-size: 105%;
 }
-.warning{
-    cursor:pointer;
-    color:blue;
-    background-color:#DADADA;
-    border:1px solid grey;
-    position:relative;
-    padding: 0 10px;
+
+#formInput{
+    margin-bottom:5px;
+}
+
+#infoEnable{
+
+    background-color:whitesmoke;
 
 }
+
 .whitelist{
     color:black;
     opacity:.3;
 }
-.blacklist{
+
+.notable{
     cursor:pointer;
-    color:red;
     background-color:#DADADA;
     border:1px solid black;
     position:relative;
 }
 
-.blacklist:hover, .warning:hover{
+
+.notable:hover{
     background-color:white;
 }
 
-.blacklist:hover::after, .warning:hover::after{
+.notable:hover::after{
     content: 'X';
     color: black;
     position: absolute;
@@ -48,6 +47,19 @@ textarea{
     font-size: 10px;
     font-family: "Arial Black",sans-serif;
 }
+.notable:active{
+    top:1px;
+    background-color:red;
+}
+
+.blacklist{
+    color:red;
+}
+.warning{
+    color:blue;
+    padding: 0 8px;
+}
+
 
 #infoPopup{
     position:absolute;
@@ -66,10 +78,23 @@ textarea{
     background-color:white;
 
 }
+
 .popup{
     position:absolute;
     width:500px;
     height:600px;
+}
+@media (max-width: 600px) {
+    .popup {
+        width:300px;
+    }
+}
+
+
+.display{
+    min-height:500px;
+    width:100%;
+
 }
 
 

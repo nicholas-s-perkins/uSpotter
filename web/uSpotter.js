@@ -9,9 +9,8 @@
     var infoCheck = document.getElementById('infoCheck');
     var rawButton = document.getElementById('rawButton');
 
-    processButton.addEventListener('click',calcDisplay);
+    toggleProcessButton();
     removeNonAsciiButton.addEventListener('click',removeNonAscii);
-    rawButton.addEventListener('click',showRawText);
 
 
     window.addEventListener('mousemove',function(event){
@@ -27,19 +26,25 @@
         var pWidth = infoPopup.offsetWidth;
         var pHeight = infoPopup.offsetHeight;
 
+        var coords = pickBestCoordinateForPopup(pWidth,pHeight,window.innerWidth,window.innerHeight,clientX,clientY);
 
-        if(clientY > window.innerHeight/2){
-            infoPopup.style.top = (pageY-pHeight-10) + 'px';
-        }else{
-            infoPopup.style.top = 10+pageY + 'px';
-        }
+        infoPopup.style.left = coords.x + 'px';
+        infoPopup.style.top = coords.y + 'px';
 
-        if(clientX > window.innerWidth/2){
-            infoPopup.style.left = (pageX-pWidth) + 'px';
+        //if(clientY > window.innerHeight/2){
+        //    infoPopup.style.top = (pageY-pHeight-10) + 'px';
+        //}else{
+        //    infoPopup.style.top = 10+pageY + 'px';
+        //}
+        //
+        //if(clientX > window.innerWidth/2){
+        //    infoPopup.style.left = (pageX-pWidth) + 'px';
+        //
+        //}else{
+        //    infoPopup.style.left = pageX + 'px';
+        //}
 
-        }else{
-            infoPopup.style.left = pageX + 'px';
-        }
+
 
 
 
@@ -48,15 +53,31 @@
     pasteText.value = DATA;
     processButton.click();
 
+    function toggleProcessButton(){
+        if(processButton.textContent === 'Display Raw'){
+            processButton.textContent = 'Display Formatted';
+            processButton.removeEventListener('click',showRawText);
+            processButton.addEventListener('click',showFormattedText);
+        }else{
+            processButton.textContent = 'Display Raw';
+            processButton.removeEventListener('click',showFormattedText);
+            processButton.addEventListener('click',showRawText);
+        }
+    }
 
     function showRawText(){
         display.style.display = 'none';
         pasteText.style.display = 'block';
+        toggleProcessButton();
     }
-    function hideRawText(){
-        display.style.display = 'none';
-        pasteText.style.display = 'block';
+
+    function showFormattedText(){
+        display.style.display = 'block';
+        pasteText.style.display = 'none';
+        calcDisplay();
+        toggleProcessButton();
     }
+
 
     function removeNonAscii(){
         var text = pasteText.value;
@@ -68,13 +89,14 @@
             }
         });
         pasteText.value = output;
-        processButton.click();
+        calcDisplay();
     }
 
 
+
+
+
     function calcDisplay(){
-        display.style.display = 'block';
-        pasteText.style.display = 'none';
         var text = pasteText.value;
         var length = text.length;
 
@@ -106,17 +128,17 @@
 
 
             }else if (blacklist.hasOwnProperty(char)){
-                output+= '<span class="blacklist" data-index="'+i+'" data-code="'+code+'">'+blacklist[char]+'</span>';
+                output+= '<span class="blacklist notable" data-index="'+i+'" data-code="'+code+'">'+blacklist[char]+'</span>';
             //warning, unknown unicode
             }else{
-                output+= '<span class="warning" data-index="'+i+'" data-code="'+code+'">'+char+'</span>';
+                output+= '<span class="warning notable" data-index="'+i+'" data-code="'+code+'">'+char+'</span>';
             }
 
         }
         display.innerHTML = output;
 
         //blacklist handlers
-        var notables = document.querySelectorAll('.blacklist, .warning');
+        var notables = document.querySelectorAll('.notable');
         var k = 0;
         for(; k < notables.length; ++k){
             notables[k].addEventListener('click',removeMe,false);
@@ -133,16 +155,9 @@
 
         pasteText.value = text.substring(0,index) + text.substring(index+1);
         hideInfo();
-        processButton.click();
+        calcDisplay();
 
     }
-
-    function toHex16String(num){
-        var str = Number(num).toString(16).toUpperCase();
-        var diff = 4 - str.length;
-        return 'U+'+Array(diff).join('0') + str;
-    }
-
 
     function displayInfo(event){
         if(!infoCheck.checked){return false;}
@@ -171,5 +186,134 @@
             func(iterable[_index],_index);
         }
     }
+
+
+    function pickBestCoordinateForPopup(pWidth,pHeight,winWidth,winHeight,x,y){
+        var cursorMargin = 20;
+        var topSpace   = new RectSpace('top',0,0,winWidth,y-cursorMargin);
+        var rightSpace = new RectSpace('right',x+cursorMargin,0,winWidth-(x+cursorMargin),winHeight);
+        var btmSpace   = new RectSpace('btm',0,y+cursorMargin,winWidth,winHeight-(y+cursorMargin));
+        var leftSpace  = new RectSpace('left',0,0,x-cursorMargin,winHeight);
+
+        var popupSpace = new RectSpace('popup',null,null,pWidth,pHeight);
+
+        var allSpaces = [topSpace,rightSpace,btmSpace,leftSpace];
+
+        var mostSimilar = popupSpace.findMostSimilarFit(allSpaces);
+
+        var chosenSpace = null;
+        //see if most similar fits
+        if(mostSimilar.width > popupSpace.width && mostSimilar.height > popupSpace.height){
+            chosenSpace = mostSimilar;
+        //else fit the closest in size/ratio
+        }else{
+            chosenSpace = popupSpace.findClosestByRatio(allSpaces);
+        }
+
+        console.log(chosenSpace);
+        var spacePoint = {x:0,y:0};
+        var popCorner = {x:0,y:0};
+        switch(chosenSpace.name){
+            case 'top':
+                spacePoint.x = chosenSpace.x+chosenSpace.width/2;
+                spacePoint.y = chosenSpace.y+chosenSpace.height;
+
+                popCorner.x = spacePoint.x-popupSpace.width/2;
+                popCorner.y = spacePoint.y-popupSpace.height;
+                return popCorner;
+            case 'right':
+                spacePoint.x = chosenSpace.x;
+                spacePoint.y = chosenSpace.y+chosenSpace.height/2;
+
+                popCorner.x = spacePoint.x;
+                popCorner.y = spacePoint.y-popupSpace.height/2;
+                return popCorner;
+            case 'bottom':
+                spacePoint.x = chosenSpace.x+chosenSpace.width/2;
+                spacePoint.y = chosenSpace.y;
+
+                popCorner.x = spacePoint.x-popupSpace.width/2;
+                popCorner.y = spacePoint.y;
+                return popCorner;
+            case 'left':
+                spacePoint.x = chosenSpace.x+chosenSpace.width;
+                spacePoint.y = chosenSpace.y + chosenSpace.height/2;
+
+                popCorner.x = spacePoint.x-popupSpace.width;
+                popCorner.y = spacePoint.y-popupSpace.height/2;
+
+                return popCorner;
+        }
+
+    }
+
+
+    function RectSpace(name,x,y,width,height){
+        this.name = name;
+
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+
+        this.volume = width*height;
+    }
+    RectSpace.max = function(/* rectSpaces...*/){
+        var max = arguments[0];
+        for(var i = 1; i < arguments.length; ++i){
+            var arg = arguments[i];
+            if(arg.volume > max.volume){
+                max = arg;
+            }
+        }
+
+        return max;
+    };
+
+    RectSpace.prototype = {
+        getSimilarityDistance:function(rectSpace){
+            return Math.sqrt(
+                Math.pow(rectSpace.width-this.width,2) + Math.pow(rectSpace.height-this.height,2)
+            );
+        },
+        findMostSimilarFit:function(listOfRects){
+            var minRect = listOfRects[0];
+            var minDist = this.getSimilarityDistance(listOfRects[0]);
+
+            var i = 1;
+            for(; i < listOfRects.length; ++i){
+                var arg = listOfRects[i];
+                var nextDist = this.getSimilarityDistance(arg);
+                if(nextDist < minDist && this.width < arg.width && this.height < arg.height){
+                    minRect = arg;
+                    minDist = nextDist;
+                }
+            }
+            return minRect;
+        },
+        findClosestByRatio:function(rects){
+            //volume / distance
+            var bestRect = rects[0];
+            var bestRatio = bestRect.volume/this.getSimilarityDistance(bestRect);
+
+            var i = 0;
+            for(; i < rects.length; ++i){
+                var arg = rects[i];
+                var nextRatio = arg.volume/this.getSimilarityDistance(arg);
+                //the best is the largest ratio, greatest volume with smallest difference
+                if(nextRatio > bestRatio){
+                    bestRatio = nextRatio;
+                    bestRect = arg;
+                }
+            }
+
+            return bestRect;
+        }
+
+
+
+    };
+
+
 
 })();

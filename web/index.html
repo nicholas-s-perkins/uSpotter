@@ -9,16 +9,15 @@
 <!--Controls-->
 <div id="formInput">
 
-    <button id="processButton">Process</button>
+    <button id="processButton">Display Raw</button>
     <button id="removeNonAsciiButton">Remove Non-ASCII and Non-Visible</button>
-    <button id="rawButton">Raw</button>
-    <label for="infoCheck">infoPopup<input id="infoCheck" type="checkbox" checked="checked" /></label>
+    <label id="infoEnable" for="infoCheck" ><input id="infoCheck" type="checkbox" checked="checked" />infoPopup</label>
 </div>
 
 
 <!--Input and display -->
 <div id="displayWrapper">
-    <label for="pasteText">Paste Text</label>
+    <label for="pasteText" style="display:none;">Paste Text</label>
     <textarea id="pasteText" class="display"></textarea>
     <div id="display" class="display" style="display:none;"></div>
 </div>
