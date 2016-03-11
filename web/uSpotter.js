@@ -9,11 +9,21 @@
     var infoCheck = document.getElementById('infoCheck');
     var rawButton = document.getElementById('rawButton');
 
+    //Setup Handlers
     toggleProcessButton();
     removeNonAsciiButton.addEventListener('click',removeNonAscii);
+    window.addEventListener('mousemove',windowMouseMouse,false);
+
+    //Populate with TestData
+    pasteText.value = DATA;
+    processButton.click();
 
 
-    window.addEventListener('mousemove',function(event){
+
+    /**
+     * MouseMove listener for popup.
+     */
+    function windowMouseMouse(e){
         if(infoPopup.style.display === 'none'){return;}
         //from top + scroll
         var pageX = event.pageX;
@@ -27,31 +37,11 @@
         var pHeight = infoPopup.offsetHeight;
 
         var coords = pickBestCoordinateForPopup(pWidth,pHeight,window.innerWidth,window.innerHeight,clientX,clientY);
-
+        console.log(coords);
+        console.log();
         infoPopup.style.left = coords.x + 'px';
         infoPopup.style.top = coords.y + 'px';
-
-        //if(clientY > window.innerHeight/2){
-        //    infoPopup.style.top = (pageY-pHeight-10) + 'px';
-        //}else{
-        //    infoPopup.style.top = 10+pageY + 'px';
-        //}
-        //
-        //if(clientX > window.innerWidth/2){
-        //    infoPopup.style.left = (pageX-pWidth) + 'px';
-        //
-        //}else{
-        //    infoPopup.style.left = pageX + 'px';
-        //}
-
-
-
-
-
-    },false);
-
-    pasteText.value = DATA;
-    processButton.click();
+    }
 
     function toggleProcessButton(){
         if(processButton.textContent === 'Display Raw'){
@@ -74,10 +64,9 @@
     function showFormattedText(){
         display.style.display = 'block';
         pasteText.style.display = 'none';
-        calcDisplay();
+        formatText();
         toggleProcessButton();
     }
-
 
     function removeNonAscii(){
         var text = pasteText.value;
@@ -89,14 +78,17 @@
             }
         });
         pasteText.value = output;
-        calcDisplay();
+        formatText();
     }
 
 
 
-
-
-    function calcDisplay(){
+    /**
+     * Where the magic happens.
+     * Turns the raw text into the formatted text for the display.
+     * It does not affect display visibility.
+     */
+    function formatText(){
         var text = pasteText.value;
         var length = text.length;
 
@@ -148,14 +140,13 @@
 
     }
 
-
     function removeMe(event){
         var text = pasteText.value;
         var index = parseInt(this.dataset.index);
 
         pasteText.value = text.substring(0,index) + text.substring(index+1);
         hideInfo();
-        calcDisplay();
+        formatText();
 
     }
 
@@ -192,25 +183,15 @@
         var cursorMargin = 20;
         var topSpace   = new RectSpace('top',0,0,winWidth,y-cursorMargin);
         var rightSpace = new RectSpace('right',x+cursorMargin,0,winWidth-(x+cursorMargin),winHeight);
-        var btmSpace   = new RectSpace('btm',0,y+cursorMargin,winWidth,winHeight-(y+cursorMargin));
+        var btmSpace   = new RectSpace('bottom',0,y+cursorMargin,winWidth,winHeight-(y+cursorMargin));
         var leftSpace  = new RectSpace('left',0,0,x-cursorMargin,winHeight);
 
         var popupSpace = new RectSpace('popup',null,null,pWidth,pHeight);
 
         var allSpaces = [topSpace,rightSpace,btmSpace,leftSpace];
 
-        var mostSimilar = popupSpace.findMostSimilarFit(allSpaces);
+        var chosenSpace = popupSpace.findClosestByRatio(allSpaces);
 
-        var chosenSpace = null;
-        //see if most similar fits
-        if(mostSimilar.width > popupSpace.width && mostSimilar.height > popupSpace.height){
-            chosenSpace = mostSimilar;
-        //else fit the closest in size/ratio
-        }else{
-            chosenSpace = popupSpace.findClosestByRatio(allSpaces);
-        }
-
-        console.log(chosenSpace);
         var spacePoint = {x:0,y:0};
         var popCorner = {x:0,y:0};
         switch(chosenSpace.name){
@@ -248,6 +229,11 @@
     }
 
 
+    /**
+     * Defines 2D Rectangle model and provides functions for comparing it in
+     * 2D space with other RectSpaces
+     * @constructor
+     */
     function RectSpace(name,x,y,width,height){
         this.name = name;
 
@@ -258,39 +244,27 @@
 
         this.volume = width*height;
     }
-    RectSpace.max = function(/* rectSpaces...*/){
-        var max = arguments[0];
-        for(var i = 1; i < arguments.length; ++i){
-            var arg = arguments[i];
-            if(arg.volume > max.volume){
-                max = arg;
-            }
-        }
-
-        return max;
-    };
 
     RectSpace.prototype = {
+        /**
+         * Compares the 'distance' between two RectSpaces in terms of their dimensions (not location).  Used for Best Fit algorithms.
+         * @param {RectSpace} rectSpace
+         * @returns {Number} the 'distance' between this RectSpace and the input in terms of dimensions
+         */
         getSimilarityDistance:function(rectSpace){
             return Math.sqrt(
                 Math.pow(rectSpace.width-this.width,2) + Math.pow(rectSpace.height-this.height,2)
             );
         },
-        findMostSimilarFit:function(listOfRects){
-            var minRect = listOfRects[0];
-            var minDist = this.getSimilarityDistance(listOfRects[0]);
 
-            var i = 1;
-            for(; i < listOfRects.length; ++i){
-                var arg = listOfRects[i];
-                var nextDist = this.getSimilarityDistance(arg);
-                if(nextDist < minDist && this.width < arg.width && this.height < arg.height){
-                    minRect = arg;
-                    minDist = nextDist;
-                }
-            }
-            return minRect;
-        },
+        /**
+         * Finds the RectSpace that has the best ratio of volume per BestFit to this RectSpace.
+         * The 'closest' may be larger or smaller than this RectSpace, but the algorithm will
+         * pick the larger of two similar Spaces.
+         *
+         * @param {RectSpace[]} rects - A list of rectSpaces to compare to this one
+         * @returns {RectSpace} The most similar rectSpace to this one by ratio of volume to similar dimensions.
+         */
         findClosestByRatio:function(rects){
             //volume / distance
             var bestRect = rects[0];
@@ -309,11 +283,5 @@
 
             return bestRect;
         }
-
-
-
     };
-
-
-
 })();
