@@ -37,8 +37,7 @@
         var pHeight = infoPopup.offsetHeight;
 
         var coords = pickBestCoordinateForPopup(pWidth,pHeight,window.innerWidth,window.innerHeight,clientX,clientY);
-        console.log(coords);
-        console.log();
+
         infoPopup.style.left = coords.x + 'px';
         infoPopup.style.top = coords.y + 'px';
     }
