@@ -93,17 +93,21 @@
 
         var output = '';
         var i = 0;
-        for(;i < length; ++i){
+        for(;i < length; ++i) {
             var char = text.charAt(i);
-            var charLookAhead = text.charAt(i+1);
+            var charLookAhead = text.charAt(i + 1);
             var code = text.codePointAt(i);
-            var codeLookAhead = text.codePointAt(i+1);
+            var codeLookAhead = text.codePointAt(i + 1);
+
+            //characters not allowed for html
+            if (escapeMap.hasOwnProperty(char)) {
+                output+= escapeMap[char];
 
             //normal visible ASCII range
-            if( code >= 0x0020  && code < 0x007F) {
+            }else if( code >= 0x0020  && code < 0x007F) {
                 output += char;
 
-                //whitelist item
+            //whiteList item
             }else if(whitelist.hasOwnProperty(char)){
                 output+= '<span class="whitelist">'+whitelist[char]+'</span>';
 

@@ -1,4 +1,5 @@
-var DATA= "Test Data\n"+
+var DATA =
+"You can click \"Display Raw\" to edit this text^\n"+
 "U+0020\u0009SPACE foo\u0020bar\n"+
 "U+00A0\u0009NO_BREAK_SPACE foo\u00A0bar\r\n"+
 "U+1680\u0009OGHAM_SPACE_MARK foo\u1680bar\n"+

@@ -60,4 +60,11 @@ var whitelist = {
     "\u000D": "\\r\u21a9" // \r
 };
 
-
+//for html escaping
+var escapeMap = {
+    "<":  "&lt;",
+    ">":  "&gt;",
+    "&":  "&amp;",
+    "\"": "&quot;",
+    "'":  "&#39;"
+};
